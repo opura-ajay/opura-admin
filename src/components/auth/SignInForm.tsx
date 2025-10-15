@@ -98,14 +98,14 @@ export default function SignInForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(80%_60%_at_50%_-10%,hsl(var(--muted))/0.35_0%,hsl(var(--background))_45%)] dark:bg-[radial-gradient(80%_60%_at_50%_-10%,hsl(var(--muted))/0.25_0%,hsl(var(--background))_45%)]">
+    <div className=" bg-[radial-gradient(80%_60%_at_50%_-10%,hsl(var(--muted))/0.35_0%,hsl(var(--background))_45%)] dark:bg-[radial-gradient(80%_60%_at_50%_-10%,hsl(var(--muted))/0.25_0%,hsl(var(--background))_45%)]">
       {/* Container */}
-      <div className="mx-auto grid min-h-[calc(100vh-4px)] max-w-6xl grid-cols-1 gap-8 p-4 md:grid-cols-2 md:items-center">
+      <div className="mx-auto grid min-h-[calc(100vh-81px)] max-w-6xl grid-cols-1 gap-8 p-4 md:grid-cols-2 md:items-center">
         {/* Left: Auth Card */}
         <div className="order-1 md:order-1 2xl:order-1 relative">
           {/* Absolute brand row */}
           <div className="pointer-events-none absolute -top-16 left-0 flex items-center gap-1">
-            <div className="relative h-15 w-15 overflow-hidden rounded-lg ring-1 ring-border bg-background">
+            <div className="relative h-15 w-15 overflow-hidden rounded-lg bg-background">
               <Image
                 src="/images/opura-logo.png"
                 alt="Logo"

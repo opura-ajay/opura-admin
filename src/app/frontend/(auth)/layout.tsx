@@ -1,4 +1,4 @@
-import { ThemeSwitcher } from "@/components/theme/theme-switcher";
+import { ThemeSwitchMode } from "@/components/theme/theme-switch-mode";
 
 export default function AuthLayout({
   children,
@@ -6,7 +6,9 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return <>
-  <ThemeSwitcher />
+  <div className="flex justify-center">
+    <ThemeSwitchMode />
+  </div>
   <div>{children}</div>;
   </>
   
