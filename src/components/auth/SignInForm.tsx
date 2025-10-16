@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
+import { Mail, Lock, Eye, EyeOff, Loader2, Bot } from "lucide-react"
 
 type Slide = {
   title: string
@@ -260,15 +260,8 @@ export default function SignInForm() {
                   >
                     {/* Header (small logo + tagline) */}
                     <div className="mb-6 flex items-center gap-3">
-                      <div className="relative h-10 w-10 overflow-hidden rounded-xl ring-1 ring-border bg-background">
-                        <Image
-                          src="/images/opura-logo.png"
-                          alt="Logo"
-                          fill
-                          sizes="40px"
-                          className="object-contain p-1.5"
-                          priority
-                        />
+                      <div className="relative  overflow-hidden">
+                        <Bot className="h-12 w-12 text-blue-600 dark:text-blue-500 sm:h-14 sm:w-14" />
                       </div>
                       <div>
                         <div className="text-sm font-semibold text-foreground">
