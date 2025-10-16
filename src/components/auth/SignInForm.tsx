@@ -100,7 +100,7 @@ export default function SignInForm() {
   return (
     <div className=" bg-[radial-gradient(80%_60%_at_50%_-10%,hsl(var(--muted))/0.35_0%,hsl(var(--background))_45%)] dark:bg-[radial-gradient(80%_60%_at_50%_-10%,hsl(var(--muted))/0.25_0%,hsl(var(--background))_45%)]">
       {/* Container */}
-      <div className="mx-auto grid min-h-[calc(100vh-81px)] max-w-6xl grid-cols-1 gap-8 p-4 md:grid-cols-2 md:items-center">
+      <div className="mx-auto grid min-h-[calc(100vh-81px)] max-w-6xl grid-cols-1 gap-4 lg:gap-8 p-4 md:grid-cols-2 md:items-center">
         {/* Left: Auth Card */}
         <div className="order-1 md:order-1 2xl:order-1 relative">
           {/* Absolute brand row */}
@@ -217,10 +217,10 @@ export default function SignInForm() {
 
                 {/* Helper links */}
                 <div className="flex items-center justify-between text-sm">
-                  <a className="text-primary hover:underline" href="#">
+                  <a className="text-primary hover:underline" href="/forgot-password">
                     Forgot password?
                   </a>
-                  <a className="text-muted-foreground hover:text-foreground" href="#">
+                  <a className="text-muted-foreground hover:text-foreground" href="/sign-up">
                     Create account
                   </a>
                 </div>

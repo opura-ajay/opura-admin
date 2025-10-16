@@ -10,11 +10,6 @@ type FooterProps = {
   showLegalLinks?: boolean;
 };
 
-/**
- * Theme-aware footer using shadcn/tailwind tokens.
- * - Ensure Tailwind has darkMode: "class" and your app is wrapped with shadcn ThemeProvider.
- * - Colors now use semantic tokens: bg-background, text-foreground, border-border, etc.
- */
 const ENV_COLORS: Record<NonNullable<FooterProps['env']>, string> = {
   production: 'bg-emerald-600',
   staging: 'bg-amber-600',
@@ -89,10 +84,10 @@ export default function Footer({
                 </Link>
               </>
             )}
-            <span className="hidden text-muted sm:inline">•</span>
+            <span className="text-muted sm:inline">•</span>
             <a
               href="mailto:support@opura-admin.com"
-              className="hidden hover:text-foreground sm:inline"
+              className="hover:text-foreground sm:inline"
             >
               Support
             </a>

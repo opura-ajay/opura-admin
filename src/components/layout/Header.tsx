@@ -60,7 +60,7 @@ export default function Header({
           <button
             aria-label="Toggle Sidebar"
             onClick={onToggleSidebar}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground lg:hidden"
           >
             <svg
               className="h-5 w-5"

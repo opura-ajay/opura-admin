@@ -76,7 +76,7 @@ export default function AdminPage() {
 
   return (
     <>
-      <div className="lg:sticky lg:top-0 z-30 pb-4">
+      <div className="lg:sticky lg:top-0 pb-4">
         <HeaderBar
           onSave={() => { handleSave() }}
           onRollback={() => { handleRollback() }}

@@ -6,7 +6,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return <>
-  <div className="flex justify-center">
+  <div className="flex md:justify-center justify-end pt-4 pr-4">
     <ThemeSwitchMode />
   </div>
   <div>{children}</div>;
