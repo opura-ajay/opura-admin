@@ -81,7 +81,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <div className="lg:sticky lg:top-0 z-30">
+        <div className="lg:sticky lg:top-0 z-999">
           <Header onToggleSidebar={toggleSidebar} />
         </div>
 

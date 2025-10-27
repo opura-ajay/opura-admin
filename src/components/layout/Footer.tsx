@@ -26,7 +26,7 @@ export default function Footer({
   const envColor = ENV_COLORS[env] || 'bg-muted-foreground';
 
   return (
-    <footer className="border-t border-border bg-background/90 backdrop-blur">
+    <footer className="border-t border-border bg-background/90 backdrop-blur z-999">
       <div className="mx-auto px-3">
         <div className="flex h-12 items-center gap-3 text-xs text-muted-foreground">
           {/* Left: brand/status */}
