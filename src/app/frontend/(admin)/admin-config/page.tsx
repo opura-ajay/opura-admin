@@ -5,7 +5,7 @@ import { FormField } from '@/components/admin-config/FormField';
 import { HeaderBar } from '@/components/admin-config/HeaderBar';
 import { LivePreview } from '@/components/admin-config/LivePreview';
 import { useSidebar } from '@/components/layout/SidebarContext';
-import { defaultConfig } from '@/config/opura-config';
+import { defaultConfig } from '@/config/admin-config';
 import { useEffect, useState } from 'react';
 
 export default function AdminPage() {
@@ -16,22 +16,22 @@ export default function AdminPage() {
   // Initialize defaults once (or fetch)
   useEffect(() => {
     const defaults: Record<string, any> = {};
-    config.page.sections.forEach((section) => {
+    config.sections.forEach((section) => {
       section.fields.forEach((field) => {
         if (field.type === 'object' && field.fields) {
           defaults[field.key] = {};
           field.fields.forEach((sub) => {
-            defaults[field.key][sub.key] = sub.default;
+            defaults[field.key][sub.key] = sub.current_value;
           });
         } else {
-          defaults[field.key] = field.default;
+          defaults[field.key] = field.current_value;
         }
       });
     });
     setFormData(defaults);
   }, [config]);
 
-  const section = config.page.sections.find((s) => s.id === activeSection);
+  const section = config.sections.find((s) => s.id === activeSection);
 
     const handleSave = async () => {
     try {
@@ -48,15 +48,15 @@ export default function AdminPage() {
   const handleRollback = () => {
     // Reset to defaults
     const defaults: Record<string, any> = {};
-    config.page.sections.forEach(section => {
+    config.sections.forEach(section => {
       section.fields.forEach(field => {
         if (field.type === 'object' && field.fields) {
           defaults[field.key] = {};
           field.fields.forEach(subField => {
-            defaults[field.key][subField.key] = subField.default;
+            defaults[field.key][subField.key] = subField.current_value;
           });
         } else {
-          defaults[field.key] = field.default;
+          defaults[field.key] = field.current_value;
         }
       });
     });
@@ -76,7 +76,7 @@ export default function AdminPage() {
 
   return (
     <>
-      <div className="lg:sticky lg:top-0 pb-4">
+      <div className="lg:top-0 pb-4">
         <HeaderBar
           onSave={() => { handleSave() }}
           onRollback={() => { handleRollback() }}

@@ -30,7 +30,7 @@ export default function Footer({
       <div className="mx-auto px-3">
         <div className="flex h-12 items-center gap-3 text-xs text-muted-foreground">
           {/* Left: brand/status */}
-          <div className="flex min-w-0 items-center gap-2">
+          {/* <div className="flex min-w-0 items-center gap-2">
             <span
               className={`inline-flex h-2.5 w-2.5 rounded-full ${envColor} shadow-sm`}
               title={env}
@@ -44,10 +44,10 @@ export default function Footer({
                 </span>
               ) : null}
             </span>
-          </div>
+          </div> */}
 
           {/* Middle: uptime or breadcrumbs placeholder */}
-          <div className="hidden flex-1 items-center sm:flex">
+          {/* <div className="hidden flex-1 items-center sm:flex">
             {uptimeText ? (
               <span className="inline-flex items-center gap-1">
                 <svg
@@ -63,21 +63,23 @@ export default function Footer({
             ) : (
               <div className="h-4" />
             )}
-          </div>
+          </div> */}
 
           {/* Right: quick links */}
           <div className="ml-auto flex items-center gap-3">
             {showLegalLinks && (
               <>
                 <Link
-                  href="/privacy-policy"
+                  href="/#"
+                  // href="/privacy-policy"
                   className="hover:text-foreground"
                 >
                   Privacy
                 </Link>
                 <span className="text-muted">•</span>
                 <Link
-                  href="/terms-and-conditions"
+                  // href="/terms-and-conditions"
+                  href="/#"
                   className="hover:text-foreground"
                 >
                   Terms
@@ -86,7 +88,8 @@ export default function Footer({
             )}
             <span className="text-muted sm:inline">•</span>
             <a
-              href="mailto:support@opura-admin.com"
+              // href="mailto:support@opura-admin.com"
+              href="/#"
               className="hover:text-foreground sm:inline"
             >
               Support

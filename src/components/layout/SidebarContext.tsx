@@ -14,7 +14,7 @@ type SidebarCtx = {
 const Ctx = createContext<SidebarCtx | null>(null);
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-  const [activeSection, setActiveSection] = useState<string>('botSetup');
+  const [activeSection, setActiveSection] = useState<string>('ui_branding');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const value = useMemo(

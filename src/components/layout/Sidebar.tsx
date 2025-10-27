@@ -16,8 +16,9 @@ import {
     Users,
     Shield,
     BarChart3,
+    DollarSign,
 } from 'lucide-react';
-import { ConfigSection } from '@/config/opura-config';
+import { ConfigSection } from '@/config/admin-config';
 import Image from 'next/image';
 
 export default function Sidebar({
@@ -36,28 +37,26 @@ export default function Sidebar({
     const [adminOpen, setAdminOpen] = useState(true);
 
     const iconMap: Record<string, any> = {
-        botSetup: Settings,
-        branding: Eye,
-        aiSettings: Brain,
-        behavior: MessageSquare,
-        knowledge: Database,
-        handoff: Users,
+        ui_branding: Eye,
+        conversation_personality: Brain,
+        ai_settings: MessageSquare,
+        knowledge_base: Database,
+        voice_speech: Users,
         guardrails: Shield,
-        analytics: BarChart3,
+        meta_controls: BarChart3,
     };
 
     const adminSubmenu = useMemo(
         () =>
             sections.filter((s) =>
                 [
-                    'botSetup',
-                    'branding',
-                    'aiSettings',
-                    'behavior',
-                    'knowledge',
-                    'handoff',
+                    'ui_branding',
+                    'conversation_personality',
+                    'ai_settings',
+                    'knowledge_base',
+                    'voice_speech',
                     'guardrails',
-                    'analytics',
+                    'meta_controls',
                 ].includes(s.id)
             ),
         [sections]
@@ -68,7 +67,7 @@ export default function Sidebar({
     const goDashboard = () => {
         if (!isDashboardRoute) router.push('/dashboard');
         closeSdiebar && closeSdiebar();
-        
+
     };
 
     const openAdminConfig = () => {
@@ -92,8 +91,8 @@ export default function Sidebar({
     };
 
     return (
-    <aside className="h-full w-64 flex-shrink-0 bg-card text-card-foreground">
-      <div className="flex h-full flex-col p-4 overflow-y-auto">
+        <aside className="h-full w-68 flex-shrink-0 bg-card text-card-foreground">
+            <div className="flex h-full flex-col p-4 overflow-y-auto">
 
 
                 <div className="mb-8 flex items-center space-x-3">
@@ -165,6 +164,46 @@ export default function Sidebar({
                                     })}
                                 </ul>
                             )}
+                        </li>
+
+                        {/* User Management */}
+                        <li>
+                            <button
+                                onClick={() => router.push('/user-management')}
+                                className={`flex w-full items-center space-x-3 rounded-md px-3 py-2 text-left transition-colors ${
+                                    pathname?.startsWith('/user-management')
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                                }`}
+                            >
+                                <Users className="h-4 w-4" />
+                                <span className="text-sm">User Management</span>
+                            </button>
+                        </li>
+
+                        {/* Finance */}
+                        <li>
+                            <button
+                                onClick={() => router.push('/finance')}
+                                className={`flex w-full items-center space-x-3 rounded-md px-3 py-2 text-left transition-colors ${
+                                    pathname?.startsWith('/finance')
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                                }`}
+                            >
+                                <svg 
+                                    className="h-4 w-4" 
+                                    viewBox="0 0 24 24" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    strokeWidth="2" 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                </svg>
+                                <span className="text-sm">Finance</span>
+                            </button>
                         </li>
                     </ul>
                 </nav>

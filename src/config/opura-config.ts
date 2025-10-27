@@ -1,4 +1,3 @@
-// config/opura-config.ts
 export interface ConfigField {
   key: string;
   label: string;

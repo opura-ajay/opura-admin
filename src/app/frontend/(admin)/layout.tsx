@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PageConfig, defaultConfig } from '@/config/opura-config';
+import { PageConfig, defaultConfig } from '@/config/admin-config';
 import Footer from '@/components/layout/Footer';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
@@ -22,7 +22,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<PageConfig | null>(null);
 
   useEffect(() => {
-    fetch('/api/opura-config')
+    fetch('/api/config')
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((data) => setConfig(data))
       .catch(() => setConfig(defaultConfig));
@@ -40,7 +40,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       <div className="hidden lg:block">
         {config && (
           <Sidebar
-            sections={config.page.sections}
+            sections={config.sections}
             activeSection={activeSection}
             onSectionChange={setActiveSection}
           />
@@ -69,7 +69,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
             aria-label="Mobile navigation drawer"
           >
             <Sidebar
-              sections={config.page.sections}
+              sections={config.sections}
               activeSection={activeSection}
               onSectionChange={handleSelectSection}
               closeSdiebar={closeSidebar}

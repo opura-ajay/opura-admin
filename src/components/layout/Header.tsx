@@ -25,7 +25,7 @@ type AdminHeaderProps = {
 export default function Header({
   onToggleSidebar,
   title = 'Admin',
-  showSearch = true,
+  showSearch = false,
   onLogout,
   logoSrc = '/icons/opura-logo.png',
 }: AdminHeaderProps) {
