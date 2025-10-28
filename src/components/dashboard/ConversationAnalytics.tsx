@@ -331,6 +331,9 @@ export const ConversationAnalytics = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 6% 90%)" opacity={0.3} />
                 <XAxis 
                   dataKey="time"
+                  angle={-45}
+                  textAnchor="end"
+                  height={100}
                   interval={0}
                 />
                 <YAxis 

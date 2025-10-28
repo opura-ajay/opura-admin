@@ -22,8 +22,8 @@ export const MetricCard = ({ title, value, icon: Icon, subtitle }: MetricCardPro
             <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
           )}
         </div>
-        <div className="p-3 bg-accent-cyan rounded-xl">
-          <Icon className="w-6 h-6 text-accent-cyan" />
+        <div className="p-2 bg-accent-cyan rounded-xl">
+          <Icon className="w-5 h-5 text-accent-cyan" />
         </div>
       </div>
     </Card>
