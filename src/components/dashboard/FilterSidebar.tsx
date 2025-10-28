@@ -80,18 +80,18 @@ export const FilterSidebar = ({ isOpen, onToggle, activeTab }: FilterSidebarProp
 
       <div
         className={cn(
-          "fixed right-0 top-0 h-full bg-card border-l border-border shadow-xl transition-all duration-300 z-40 overflow-y-auto",
+          "fixed right-0 top-0 h-full bg-card border-l border-border shadow-xl transition-all duration-300 z-40",
           isOpen ? "w-80 translate-x-0" : "w-0 translate-x-full"
         )}
       >
-        <div className="p-6 pt-25 space-y-6">
+        <div className="p-6 pt-25 space-y-6 h-full flex flex-col">
           <div>
             <h3 className="text-lg font-semibold mb-4 bg-gradient-primary bg-clip-text text-transparent">
               Filters
             </h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-y-auto flex-1 pr-2" style={{ maxHeight: 'calc(100vh - 230px)' }}>
             <div>
               <Label className="text-sm font-medium mb-2 block">Start Date</Label>
               <Popover>

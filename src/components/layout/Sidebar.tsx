@@ -2,6 +2,8 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { useSidebar } from './SidebarContext';
+import { ChevronLeft, Menu } from 'lucide-react';
 import {
   ChevronDown,
   ChevronRight,
@@ -28,6 +30,12 @@ export default function Sidebar({
   onSectionChange: (sectionId: string) => void;
   closeSdiebar?: () => void;
 }) {
+  const {
+    isSidebarOpen,
+    openSidebar,
+    closeSidebar,
+    toggleSidebar,
+  } = useSidebar();
   const router = useRouter();
   const pathname = usePathname();
   const [adminOpen, setAdminOpen] = useState(true);
@@ -87,20 +95,30 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="h-full w-68 flex-shrink-0 bg-card text-card-foreground border-r border-border shadow-sm">
-      <div className="flex h-full flex-col p-4 overflow-y-auto">
-        <div className="mb-8 flex items-center space-x-3">
-          <div className="relative h-8 w-8 overflow-hidden rounded-full ring-1 ring-border bg-card">
-            <Image
-              src="/images/opura-logo.png"
-              alt="Opura Admin"
-              fill
-              sizes="32px"
-              className="object-cover"
-              priority
-            />
+    <aside className={`h-full flex-shrink-0 bg-card text-card-foreground border-r border-border shadow-sm transition-all duration-300 ${isSidebarOpen ? 'w-68' : 'w-16'}`}>
+      <div className="flex h-full flex-col p-2 overflow-y-auto">
+        {/* Sidebar toggle button */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center mb-2">
+            <button
+              onClick={toggleSidebar}
+              className="rounded-md p-4 text-muted-foreground hover:text-foreground hover:bg-accent "
+              title={isSidebarOpen ? 'Close Sidebar' : 'Open Sidebar'}
+            >
+              {isSidebarOpen ? <ChevronLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+            <div className="relative h-8 w-8 overflow-hidden rounded-full ring-1 ring-border bg-card ml-2">
+              <Image
+                src="/images/opura-logo.png"
+                alt="Opura Admin"
+                fill
+                sizes="32px"
+                className="object-cover"
+                priority
+              />
+            </div>
+            {isSidebarOpen && <span className="text-lg font-semibold ml-2">Opura Admin</span>}
           </div>
-          <span className="text-lg font-semibold">Opura Admin</span>
         </div>
 
         <nav>
@@ -109,40 +127,43 @@ export default function Sidebar({
             <li>
               <button
                 onClick={goDashboard}
-                className={`flex w-full items-center space-x-3 rounded-md px-3 py-2 text-left transition-colors ${
+                className={`flex items-center rounded-md px-3 py-2 text-left transition-colors w-full ${
                   isDashboard
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                 }`}
               >
                 <BarChart3 className="h-4 w-4" />
-                <span className="text-sm">Dashboard</span>
+                {isSidebarOpen && <span className="ml-3 text-sm">Dashboard</span>}
               </button>
             </li>
 
             {/* Admin Config (parent shows open state, not selected) */}
             <li>
               <button
-                onClick={toggleAdmin}
-                className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left transition-colors
+                onClick={() => {
+                  if (!isSidebarOpen) return;
+                  toggleAdmin();
+                }}
+                className={`flex items-center justify-between rounded-md px-3 py-2 text-left transition-colors w-full
                   ${
-                    adminOpen || isAdminArea
+                    (adminOpen || isAdminArea) && isSidebarOpen
                       ? 'text-foreground bg-secondary'
                       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                   }`}
               >
-                <span className="flex items-center space-x-3">
+                <span className="flex items-center">
                   <Settings className="h-4 w-4" />
-                  <span className="text-sm">Admin Config</span>
+                  {isSidebarOpen && <span className="ml-3 text-sm">Admin Config</span>}
                 </span>
-                {adminOpen ? (
+                {isSidebarOpen && (adminOpen ? (
                   <ChevronDown className="h-4 w-4" />
                 ) : (
                   <ChevronRight className="h-4 w-4" />
-                )}
+                ))}
               </button>
 
-              {adminOpen && (
+              {adminOpen && isSidebarOpen && (
                 <ul className="ml-3 mt-1 space-y-1">
                   {adminSubmenu.map((s) => {
                     const Icon = iconMap[s.id] || Settings;
@@ -151,14 +172,14 @@ export default function Sidebar({
                       <li key={s.id}>
                         <button
                           onClick={() => selectConfigSection(s.id)}
-                          className={`flex w-full items-center space-x-3 rounded-md px-3 py-2 text-left transition-colors ${
+                          className={`flex items-center rounded-md px-3 py-2 text-left transition-colors w-full ${
                             isActive
                               ? 'bg-primary text-primary-foreground'
                               : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                           }`}
                         >
                           <Icon className="h-4 w-4" />
-                          <span className="text-sm">{s.label}</span>
+                          {isSidebarOpen && <span className="ml-3 text-sm">{s.label}</span>}
                         </button>
                       </li>
                     );
@@ -171,14 +192,14 @@ export default function Sidebar({
             <li>
               <button
                 onClick={() => router.push('/user-management')}
-                className={`flex w-full items-center space-x-3 rounded-md px-3 py-2 text-left transition-colors ${
+                className={`flex items-center rounded-md px-3 py-2 text-left transition-colors w-full ${
                   isUsers
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                 }`}
               >
                 <Users className="h-4 w-4" />
-                <span className="text-sm">User Management</span>
+                {isSidebarOpen && <span className="ml-3 text-sm">User Management</span>}
               </button>
             </li>
 
@@ -186,7 +207,7 @@ export default function Sidebar({
             <li>
               <button
                 onClick={() => router.push('/finance')}
-                className={`flex w-full items-center space-x-3 rounded-md px-3 py-2 text-left transition-colors ${
+                className={`flex items-center rounded-md px-3 py-2 text-left transition-colors w-full ${
                   isFinance
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
@@ -203,16 +224,18 @@ export default function Sidebar({
                 >
                   <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                 </svg>
-                <span className="text-sm">Finance</span>
+                {isSidebarOpen && <span className="ml-3 text-sm">Finance</span>}
               </button>
             </li>
           </ul>
         </nav>
 
         <div className="mt-auto flex items-center justify-center">
-          <div className="text-center text-xs text-muted-foreground">
-            Opura Admin © 2025
-          </div>
+          {isSidebarOpen && (
+            <div className="text-center text-xs text-muted-foreground">
+              Opura Admin © 2025
+            </div>
+          )}
         </div>
       </div>
     </aside>
