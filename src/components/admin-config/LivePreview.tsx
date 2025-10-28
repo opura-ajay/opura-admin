@@ -28,9 +28,11 @@ export function LivePreview({ formData }: { formData: any }) {
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    console.log('Messages updated:', formData, messages);
-  }, [messages]);
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      // console.log('Messages updated:', formData, messages);
+    }, [input]);
 
   // Add welcome_message message on mount or when welcome_message changes
   useEffect(() => {
