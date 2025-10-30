@@ -18,16 +18,16 @@ export function HeaderBar({
     <div className="w-full sm:w-auto">
       <h1 className="flex items-center justify-center text-lg font-bold text-card-foreground sm:justify-start sm:text-xl">
         <Bot className="mr-2 h-6 w-6 text-blue-600 dark:text-blue-500 sm:mr-3 sm:h-8 sm:w-8" />
-        <span className="truncate">Myra Bot Admin Console</span>
+        <span className="truncate">Myra Bot</span>
       </h1>
-      <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground sm:mt-1 sm:text-sm">
+      {/* <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground sm:mt-1 sm:text-sm">
         Configure chatbot design, tone, and AI behaviour.
-      </p>
+      </p> */}
     </div>
 
     {/* Actions */}
     <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:w-auto sm:justify-end">
-      <button
+      {/* <button
         onClick={onSave}
         className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 sm:px-4"
       >
@@ -42,7 +42,7 @@ export function HeaderBar({
         <RotateCcw className="mr-2 h-4 w-4" />
         <span className="sm:hidden">Rollback</span>
         <span className="hidden sm:inline">Rollback Config</span>
-      </button>
+      </button> */}
 
       <button
         onClick={onPublish}

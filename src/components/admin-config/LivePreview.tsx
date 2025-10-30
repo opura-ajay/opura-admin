@@ -157,12 +157,16 @@ export function LivePreview({ formData }: { formData: any }) {
           {/* Chat header */}
           <div className="mb-3 flex items-center space-x-3">
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-full text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-white overflow-hidden bg-white border"
               style={{
-                backgroundColor: formData.primary_color || '#007BFF',
+                backgroundColor: '#007BFF',
               }}
             >
-              <MessageCircle className="h-4 w-4" />
+              {formData.bot_icon ? (
+                <img src={formData.bot_icon} alt="Bot Icon" className="h-8 w-8 object-cover rounded-full" />
+              ) : (
+                <MessageCircle className="h-4 w-4 text-blue-600" />
+              )}
             </div>
             <div className="flex-1">
               <span className="font-medium text-foreground">
@@ -186,7 +190,7 @@ export function LivePreview({ formData }: { formData: any }) {
           {/* Messages container */}
           <div
             className={`mb-3 space-y-3 overflow-y-auto ${
-              isExpanded ? 'max-h-96' : 'max-h-60'
+              isExpanded ? 'max-h-96' : 'max-h-85'
             }`}
           >
             {messages.map((message) => (
@@ -275,7 +279,7 @@ export function LivePreview({ formData }: { formData: any }) {
         </div>
 
         {/* Config preview */}
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2 text-sm hidden">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Theme Color:</span>
             <div className="flex items-center gap-2">

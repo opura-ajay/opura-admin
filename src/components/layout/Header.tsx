@@ -56,7 +56,7 @@ export default function Header({
     <div className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto px-4">
         <div className="flex h-16 items-center gap-3">
-          {/* Sidebar toggle (mobile) */}
+          {/* Sidebar toggle (mobile) and TechStyle Boutique name */}
           <button
             aria-label="Toggle Sidebar"
             onClick={onToggleSidebar}
@@ -71,6 +71,7 @@ export default function Header({
               <path strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
+          <span className="ml-2 text-xl font-semibold text-foreground">TechStyle Boutique</span>
 
           {/* Example brand (kept commented if you prefer) */}
           {/*
@@ -131,6 +132,7 @@ export default function Header({
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            {/* Removed duplicate TechStyle Boutique name from right side */}
             {/*
             <Link
               href="/"
