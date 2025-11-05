@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Search, User as UserIcon, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { User } from "./types/user";
-import { Badge } from "./ui/badge";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
 
 interface UserManagementHeaderProps {
   currentUser: User;
