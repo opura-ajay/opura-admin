@@ -9,7 +9,7 @@ export default function AuthLayout({
   {/* <div className="flex md:justify-center justify-end pt-4 pr-4">
     <ThemeSwitchMode />
   </div> */}
-  <div>{children}</div>;
+  <div>{children}</div>
   </>
   
 }
