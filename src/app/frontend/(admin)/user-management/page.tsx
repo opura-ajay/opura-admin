@@ -19,14 +19,14 @@ import {
   Trash2,
 } from "lucide-react";
 import * as XLSX from "xlsx";
-import { useToast } from "@/components/user-management/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CreateUserData, User } from "@/components/user-management/types/user";
 import {
   currentUser,
   mockTenants,
   mockUsers,
 } from "@/components/user-management/data/mockData";
-import { Input } from "@/components/user-management/ui/input";
+import { Input } from "@/components/ui/input";
 import { UserTable } from "@/components/user-management/UserTable";
 import { CreateUserDialog } from "@/components/user-management/CreateUserDialog";
 import { EditUserDialog } from "@/components/user-management/editUserDialog";

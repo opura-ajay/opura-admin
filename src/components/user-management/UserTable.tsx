@@ -10,15 +10,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, ArrowUpDown } from "lucide-react";
 import { User } from "./types/user";
-import { Checkbox } from "./ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./ui/tooltip";
-import { Badge } from "./ui/badge";
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 interface UserTableProps {
   users: User[];

@@ -17,10 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "./hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { User, UserRole } from "./types/user";
 import { mockTenants } from "./data/mockData";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
 
 interface EditUserDialogProps {
   open: boolean;
