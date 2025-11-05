@@ -104,7 +104,7 @@ export const EditUserDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-[hsl(var(--dialog-background))]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-accent">
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
           <DialogDescription>
