@@ -206,6 +206,68 @@ export function FormField({
           </div>
         </div>
       );
+    // case 'voice_preview':
+    //   const voiceOptions = [
+    //     { id: 'alloy', name: 'Alloy', description: 'Versatile, balanced voice' },
+    //     { id: 'echo', name: 'Echo', description: 'Warm, natural voice' },
+    //     { id: 'fable', name: 'Fable', description: 'Expressive, dynamic voice' },
+    //     { id: 'onyx', name: 'Onyx', description: 'Deep, authoritative voice' },
+    //     { id: 'nova', name: 'Nova', description: 'Energetic, bright voice' },
+    //     { id: 'shimmer', name: 'Shimmer', description: 'Clear, professional voice' }
+    //   ];
+    //   const selectedVoice = voiceOptions.find(v => v.id === (value ?? field.current_value)) || voiceOptions[0];
+
+    //   return (
+    //     <div className="space-y-4">
+    //       <select
+    //         value={value ?? field.current_value}
+    //         onChange={(e) => onChange(field.key, e.target.value)}
+    //         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+    //       >
+    //         {voiceOptions.map((voice) => (
+    //           <option key={voice.id} value={voice.id}>
+    //             {voice.name} - {voice.description}
+    //           </option>
+    //         ))}
+    //       </select>
+    //       <div className="flex items-center gap-4 rounded-lg bg-muted/50 p-4">
+    //         <div className="flex-1">
+    //           <p className="text-sm font-medium">{selectedVoice.name}</p>
+    //           <p className="text-xs text-muted-foreground">{selectedVoice.description}</p>
+    //         </div>
+    //         <button
+    //           type="button"
+    //           onClick={() => {
+    //             // Here you would typically call your OpenAI TTS API
+    //             // For now, we'll just use the browser's speech synthesis as a placeholder
+    //             const utterance = new SpeechSynthesisUtterance("This is a preview of the selected voice.");
+    //             window.speechSynthesis.speak(utterance);
+    //           }}
+    //           className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90 flex items-center gap-2"
+    //         >
+    //           <svg
+    //             xmlns="http://www.w3.org/2000/svg"
+    //             width="16"
+    //             height="16"
+    //             viewBox="0 0 24 24"
+    //             fill="none"
+    //             stroke="currentColor"
+    //             strokeWidth="2"
+    //             strokeLinecap="round"
+    //             strokeLinejoin="round"
+    //           >
+    //             <path d="M11 5L6 9H2v6h4l5 4V5z" />
+    //             <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+    //             <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+    //           </svg>
+    //           Preview Voice
+    //         </button>
+    //       </div>
+    //       <div className="text-xs text-muted-foreground">
+    //         Note: For optimal voice quality, these samples use OpenAI&apos;s Text-to-Speech API.
+    //       </div>
+    //     </div>
+    //   );
     case 'voice_preview': {
       return (
         <div className="space-y-2">
