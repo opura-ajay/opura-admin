@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ThemeSwitcher } from '../theme/theme-switcher';
 import { ThemeSwitchMode } from '../theme/theme-switch-mode';
+import { apiUrl } from '@/lib/api';
 
 /**
  * Dark/Light support with shadcn tokens:
@@ -38,10 +39,17 @@ export default function Header({
       if (onLogout) {
         await onLogout();
       } else {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          credentials: 'include',
-        });
+        // Optional: call backend logout endpoint if you have one
+        try {
+          await fetch(apiUrl('/api/auth/logout'), {
+            method: 'POST',
+            credentials: 'include',
+          });
+        } catch (err) {
+          console.warn('Logout API call failed:', err);
+        }
+        
+        // Clear all local storage including JWT token
         localStorage.clear();
         if (typeof window !== 'undefined') window.location.href = '/sign-in';
       }

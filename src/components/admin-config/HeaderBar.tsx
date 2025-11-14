@@ -6,10 +6,12 @@ export function HeaderBar({
   onSave,
   onRollback,
   onPublish,
+  publishDisabled = false,
 }: {
   onSave: () => void;
   onRollback: () => void;
   onPublish: () => void;
+  publishDisabled?: boolean;
 }) {
   return (
 <div className="sticky top-0 border-b border-border bg-card/80 px-3 py-2 shadow-sm backdrop-blur sm:px-4">
@@ -46,7 +48,8 @@ export function HeaderBar({
 
       <button
         onClick={onPublish}
-        className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm text-white transition-colors hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 sm:px-4"
+        disabled={publishDisabled}
+        className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm text-white transition-colors hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 sm:px-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600 dark:disabled:hover:bg-emerald-500"
       >
         <Upload className="mr-2 h-4 w-4" />
         <span>Publish</span>

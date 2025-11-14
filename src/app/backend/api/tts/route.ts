@@ -10,11 +10,17 @@ export async function GET(req: NextRequest) {
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    return new Response('Missing OPENAI_API_KEY', { status: 500 });
+    console.error('OPENAI_API_KEY is not set in environment variables');
+    return new Response('Missing OPENAI_API_KEY - Please add it to your .env.local file', { 
+      status: 500,
+      headers: { 'Content-Type': 'text/plain' }
+    });
   }
 
+  console.log('TTS Request - Voice:', voice, 'Text:', text.substring(0, 50));
+
   // OpenAI TTS Audio generation
-  // Model options: "gpt-4o-mini-tts" (example), adjust to what your account supports
+  // Model options: "tts-1" (faster) or "tts-1-hd" (higher quality)
   const resp = await fetch('https://api.openai.com/v1/audio/speech', {
     method: 'POST',
     headers: {
@@ -22,16 +28,28 @@ export async function GET(req: NextRequest) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini-tts',
+      model: 'tts-1',
       voice,
       input: text,
-      format: 'mp3',
+      response_format: 'mp3',
     }),
   });
 
   if (!resp.ok) {
     const errText = await resp.text();
-    return new Response(`OpenAI TTS error: ${errText}`, { status: 500 });
+    console.error('OpenAI TTS error:', resp.status, errText);
+    
+    if (resp.status === 401) {
+      return new Response('Invalid OpenAI API key. Please check your OPENAI_API_KEY in .env.local', { 
+        status: 401,
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    }
+    
+    return new Response(`OpenAI TTS error: ${resp.status} - ${errText}`, { 
+      status: resp.status,
+      headers: { 'Content-Type': 'text/plain' }
+    });
   }
 
   const arrayBuffer = await resp.arrayBuffer();

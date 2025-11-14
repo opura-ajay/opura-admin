@@ -11,7 +11,7 @@ export default function Home() {
     useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated")
     if (isAuthenticated) {
-      router.push("/admin-config")
+      router.push("/dashboard")
     } else {
       router.push("/sign-in")
     }

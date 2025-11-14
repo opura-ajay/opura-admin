@@ -2,13 +2,35 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PageConfig, defaultConfig } from '@/config/admin-config';
+import { useRouter } from 'next/navigation';
+import { getToken } from '@/lib/api';
 import Footer from '@/components/layout/Footer';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import { SidebarProvider, useSidebar } from '@/components/layout/SidebarContext';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchConfig } from '@/store/configSlice';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      router.push('/sign-in');
+    } else {
+      setIsAuthenticated(true);
+      // Fetch config once when admin layout mounts
+      dispatch(fetchConfig('merchant_12345'));
+    }
+  }, [router, dispatch]);
+
+  if (!isAuthenticated) {
+    return null; // or a loading spinner
+  }
+
   return (
     <SidebarProvider>
       <AdminShell>{children}</AdminShell>
@@ -19,14 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 function AdminShell({ children }: { children: React.ReactNode }) {
   const { activeSection, setActiveSection, isSidebarOpen, toggleSidebar, closeSidebar } =
     useSidebar();
-  const [config, setConfig] = useState<PageConfig | null>(null);
-
-  useEffect(() => {
-    fetch('/api/config')
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data) => setConfig(data))
-      .catch(() => setConfig(defaultConfig));
-  }, []);
+  const config = useAppSelector((state) => state.config.config);
 
   // Helper to pass to Sidebar so selecting an item also closes the mobile drawer
   const handleSelectSection = (id: string) => {

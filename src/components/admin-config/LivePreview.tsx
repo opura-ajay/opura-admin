@@ -10,6 +10,7 @@ import {
   Minimize2,
 } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
+import { nextjsApiFetch } from '@/lib/api';
 
 interface Message {
   id: string;
@@ -63,9 +64,8 @@ export function LivePreview({ formData }: { formData: any }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await nextjsApiFetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [...messages, userMessage].map((m) => ({
             role: m.role,

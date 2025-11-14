@@ -109,7 +109,7 @@ export default function SignUpForm() {
       await new Promise((r) => setTimeout(r, 900));
       // For demo: mark authenticated and redirect
       localStorage.setItem('isAuthenticated', 'true');
-      router.push('/admin-config');
+      router.push('/dashboard');
     } catch (e) {
       setError('Sign up failed. Please try again.');
     } finally {
@@ -292,7 +292,7 @@ export default function SignUpForm() {
                 )}
 
                 {/* CTA */}
-                <button
+                {/* <button
                   type="submit"
                   disabled={isLoading}
                   className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-ring/20 disabled:opacity-60"
@@ -305,7 +305,7 @@ export default function SignUpForm() {
                   ) : (
                     'Create account'
                   )}
-                </button>
+                </button> */}
 
                 {/* Helper: link to Sign in */}
                 <div className="text-center text-sm">

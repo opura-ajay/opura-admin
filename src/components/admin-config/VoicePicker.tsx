@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { nextjsApiFetch } from '@/lib/api';
 
 type VoiceOption = {
   id: string;
@@ -58,9 +59,7 @@ export default function VoicePicker({
 
       setLoadingId(voiceId);
 
-      // Example: call your Next.js API route to fetch TTS securely
-      // Create /api/tts?voice=<voiceId>&text=...
-      // The API route should call OpenAI and return audio/mpeg
+      // Call Next.js backend API route (proxied to Node.js backend)
       const text = 'This is a preview of the selected voice.';
       const res = await fetch(
         `/api/tts?voice=${encodeURIComponent(voiceId)}&text=${encodeURIComponent(
@@ -69,7 +68,10 @@ export default function VoicePicker({
       );
 
       if (!res.ok) {
-        throw new Error(`TTS failed: ${res.status}`);
+        const errorText = await res.text();
+        console.error('TTS Error:', errorText);
+        alert(`Voice preview failed: ${errorText}`);
+        return;
       }
 
       const blob = await res.blob();
@@ -78,7 +80,8 @@ export default function VoicePicker({
       audioRef.current = audio;
       await audio.play();
     } catch (err) {
-      console.error(err);
+      console.error('Voice preview error:', err);
+      alert('Failed to play voice preview. Please try again.');
     } finally {
       setLoadingId(null);
     }
@@ -98,8 +101,9 @@ export default function VoicePicker({
           return (
             <label
               key={v.id}
+              onClick={() => onChange(field.key, v.id)}
               className={[
-                'group relative flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm transition',
+                'group relative flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm transition cursor-pointer',
                 active
                   ? 'border-primary ring-2 ring-primary/30 bg-primary/5'
                   : 'border-border hover:border-primary/40 hover:bg-accent/40',

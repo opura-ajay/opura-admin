@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ReduxProvider } from "@/store/ReduxProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,9 +37,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider delayDuration={150}>
-          {children}
-          </TooltipProvider>
+          <ReduxProvider>
+            <TooltipProvider delayDuration={150}>
+              {children}
+            </TooltipProvider>
+          </ReduxProvider>
         </ThemeProvider>
       </body>
     </html>

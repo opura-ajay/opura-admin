@@ -4,7 +4,6 @@ import { FormField } from '@/components/admin-config/FormField';
 import { HeaderBar } from '@/components/admin-config/HeaderBar';
 import { LivePreview } from '@/components/admin-config/LivePreview';
 import { useSidebar } from '@/components/layout/SidebarContext';
-import { PageConfig, defaultConfig } from '@/config/admin-config';
 import { Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -14,37 +13,28 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { updateFormField, resetFormData, publishConfig } from '@/store/configSlice';
 
 export default function AdminPage() {
   const { activeSection } = useSidebar();
-  const [config, setConfig] = useState<PageConfig | null>(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
-
-  useEffect(() => {
-    fetch('/api/config')
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data) => setConfig(data))
-      .catch(() => setConfig(defaultConfig));
-  }, []);
-
-  useEffect(() => {
-    const defaults: Record<string, any> = {};
-    config?.sections.forEach((section) => {
-      section.fields.forEach((field) => {
-        if (field.type === 'object' && field.fields) {
-          defaults[field.key] = {};
-          field.fields.forEach((sub) => {
-            defaults[field.key][sub.key] = sub.current_value;
-          });
-        } else {
-          defaults[field.key] = field.current_value;
-        }
-      });
-    });
-    setFormData(defaults);
-  }, [config]);
+  const dispatch = useAppDispatch();
+  const { config, formData, loading } = useAppSelector((state) => state.config);
+  const [publishLoading, setPublishLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
 
   const section = config?.sections.find((s) => s.id === activeSection);
+
+  // Handle validation change from FormField
+  const handleValidationChange = (key: string, hasError: boolean) => {
+    setFieldErrors(prev => ({
+      ...prev,
+      [key]: hasError
+    }));
+  };
+
+  // Check if any field has errors
+  const hasErrors = Object.values(fieldErrors).some(hasError => hasError);
 
   const handleSave = async () => {
     try {
@@ -57,29 +47,65 @@ export default function AdminPage() {
   };
 
   const handleRollback = () => {
-    const defaults: Record<string, any> = {};
-    config?.sections.forEach((section) => {
-      section.fields.forEach((field) => {
-        if (field.type === 'object' && field.fields) {
-          defaults[field.key] = {};
-          field.fields.forEach((subField) => {
-            defaults[field.key][subField.key] = subField.current_value;
-          });
-        } else {
-          defaults[field.key] = field.current_value;
-        }
-      });
-    });
-    setFormData(defaults);
+    dispatch(resetFormData());
   };
 
   const handlePublish = async () => {
+    if (!config) return;
+    
     try {
-      console.log('Publishing configuration:', formData);
+      setPublishLoading(true);
+      
+      // Build object with only changed values
+      const changedData: Record<string, any> = {};
+      
+      config.sections.forEach((section) => {
+        section.fields.forEach((field) => {
+          if (field.type === 'object' && field.fields) {
+            // Handle nested object fields
+            const hasChanges = field.fields.some((subField) => {
+              const currentValue = formData[field.key]?.[subField.key];
+              return currentValue !== subField.current_value;
+            });
+            
+            if (hasChanges) {
+              changedData[field.key] = {};
+              field.fields.forEach((subField) => {
+                const currentValue = formData[field.key]?.[subField.key];
+                if (currentValue !== subField.current_value) {
+                  changedData[field.key][subField.key] = currentValue;
+                }
+              });
+            }
+          } else {
+            // Handle regular fields
+            const currentValue = formData[field.key];
+            if (currentValue !== field.current_value) {
+              changedData[field.key] = currentValue;
+            }
+          }
+        });
+      });
+
+      // Only send if there are changes
+      if (Object.keys(changedData).length === 0) {
+        alert('No changes to publish.');
+        return;
+      }
+
+      console.log('Publishing changes:', changedData);
+
+      await dispatch(publishConfig({ 
+        merchantId: 'merchant_12345', 
+        changedData 
+      })).unwrap();
+
       alert('Configuration published successfully!');
     } catch (error) {
       console.error('Error publishing configuration:', error);
       alert('Error publishing configuration. Please try again.');
+    } finally {
+      setPublishLoading(false);
     }
   };
 
@@ -96,6 +122,7 @@ export default function AdminPage() {
           onPublish={() => {
             handlePublish();
           }}
+          publishDisabled={hasErrors || publishLoading}
         />
       </div>
 
@@ -175,8 +202,9 @@ export default function AdminPage() {
                     <FormField
                       field={field}
                       value={formData[field.key]}
-                      onChange={(k, v) => setFormData((p) => ({ ...p, [k]: v }))}
+                      onChange={(k, v) => dispatch(updateFormField({ key: k, value: v }))}
                       formData={formData}
+                      onValidationChange={handleValidationChange}
                     />
                   </div>
                 ))}

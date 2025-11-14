@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Mail, Lock, Eye, EyeOff, Loader2, Bot } from "lucide-react"
+import { apiUrl, setToken } from "@/lib/api"
 
 type Slide = {
   title: string
@@ -49,6 +50,17 @@ export default function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
 
+  // Get redirect URL from query params if exists
+  const [redirectPath, setRedirectPath] = useState("/dashboard")
+  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const redirect = params.get('redirect')
+    if (redirect) {
+      setRedirectPath(redirect)
+    }
+  }, [])
+
   // Slider state
   const [index, setIndex] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -83,14 +95,34 @@ export default function SignInForm() {
     setIsLoading(true)
     setError("")
     try {
-      await new Promise((r) => setTimeout(r, 900))
-      if (email === "admin@opura.ai" && password === "password") {
-        localStorage.setItem("isAuthenticated", "true")
-        router.push("/admin-config")
-      } else {
-        setError("Invalid email or password")
+      // Call your Node.js backend login API using centralized BASE_URL
+      const response = await fetch(apiUrl('/api/auth/login'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Invalid credentials' }))
+        setError(errorData.message || 'Invalid email or password')
+        return
       }
-    } catch {
+
+      const data = await response.json()
+      
+      // Store JWT token and authentication flag using centralized helper
+      if (data.token) {
+        setToken(data.token)
+        localStorage.setItem("isAuthenticated", "true")
+        // Redirect to intended destination or default to admin-config
+        router.push(redirectPath)
+      } else {
+        setError("Login failed: No token received")
+      }
+    } catch (err) {
+      console.error('Login error:', err)
       setError("Something went wrong. Please try again.")
     } finally {
       setIsLoading(false)

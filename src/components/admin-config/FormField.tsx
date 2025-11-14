@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ConfigField } from '@/config/admin-config';
 import VoicePicker from './VoicePicker';
 
@@ -9,12 +9,154 @@ export function FormField({
   value,
   onChange,
   formData,
+  onValidationChange,
 }: {
   field: ConfigField;
   value: any;
   onChange: (key: string, newValue: any) => void;
   formData: any;
+  onValidationChange?: (key: string, hasError: boolean) => void;
 }) {
+  const [error, setError] = useState<string>('');
+
+  const validateField = (fieldValue: any): string => {
+    // Only validate if field is mandatory
+    if (!field.mandatory) {
+      return '';
+    }
+
+    // Check if mandatory field has empty current_value
+    if (field.mandatory && !field.current_value && !fieldValue) {
+      return `${field.label} is required`;
+    }
+
+    // Check based on field type
+    switch (field.type) {
+      case 'text':
+      case 'textarea':
+        if (!fieldValue || fieldValue.trim() === '') {
+          return `${field.label} is required`;
+        }
+        break;
+      case 'dropdown':
+        if (!fieldValue) {
+          return `${field.label} is required`;
+        }
+        // Check if value is in options
+        if (field.options && !field.options.includes(fieldValue)) {
+          return `${field.label} is required`;
+        }
+        break;
+      case 'number':
+        if (fieldValue === undefined || fieldValue === null || fieldValue === '') {
+          return `${field.label} is required`;
+        }
+        break;
+      case 'image':
+        if (!fieldValue || fieldValue === '') {
+          return `${field.label} is required`;
+        }
+        break;
+      case 'list':
+        if (!fieldValue || fieldValue.length === 0) {
+          return `${field.label} must have at least one item`;
+        }
+        break;
+      case 'color':
+        if (!fieldValue || fieldValue === '') {
+          return `${field.label} is required`;
+        }
+        break;
+      case 'object':
+        if (!fieldValue || Object.keys(fieldValue).length === 0) {
+          return `${field.label} is required`;
+        }
+        break;
+      case 'voice_preview':
+        const voiceOptions = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+        if (!fieldValue) {
+          return `${field.label} is required`;
+        }
+        if (!voiceOptions.includes(fieldValue)) {
+          return `${field.label} must be a valid voice option`;
+        }
+        break;
+      default:
+        // For toggle, slider - no validation needed as they always have a value
+        break;
+    }
+
+    return '';
+  };
+
+  const handleChange = (key: string, newValue: any) => {
+    // Validate on change
+    const validationError = validateField(newValue);
+    setError(validationError);
+    // Notify parent about validation state
+    if (onValidationChange) {
+      onValidationChange(key, validationError !== '');
+    }
+    onChange(key, newValue);
+  };
+
+  const handleBlur = () => {
+    // Validate on blur
+    const validationError = validateField(value ?? field.current_value);
+    setError(validationError);
+    // Notify parent about validation state
+    if (onValidationChange) {
+      onValidationChange(field.key, validationError !== '');
+    }
+  };
+
+  // Validate on mount if field is mandatory and current_value is empty
+  useEffect(() => {
+    // Get the effective value (prioritize formData value over current_value)
+    const effectiveValue = value ?? field.current_value;
+    
+    // For dropdown, check if value is in options
+    if (field.type === 'dropdown') {
+      const isValueInOptions = field.options?.includes(effectiveValue);
+      // If value exists but not in options, or if no value, validate
+      if (!effectiveValue || !isValueInOptions) {
+        const validationError = validateField(effectiveValue);
+        setError(validationError);
+        if (onValidationChange) {
+          onValidationChange(field.key, validationError !== '');
+        }
+        return;
+      }
+      // Value exists and is in options - no error
+      return;
+    }
+    
+    // For voice_preview, check if value is in valid voice options
+    if (field.type === 'voice_preview') {
+      const voiceOptions = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+      const isValueValid = effectiveValue && voiceOptions.includes(effectiveValue);
+      // If value exists but not valid, or if no value, validate
+      if (!effectiveValue || !isValueValid) {
+        const validationError = validateField(effectiveValue);
+        setError(validationError);
+        if (onValidationChange) {
+          onValidationChange(field.key, validationError !== '');
+        }
+        return;
+      }
+      // Value exists and is valid - no error
+      return;
+    }
+    
+    if (field.mandatory && !effectiveValue) {
+      const validationError = validateField(effectiveValue);
+      setError(validationError);
+      if (onValidationChange) {
+        onValidationChange(field.key, validationError !== '');
+      }
+    }
+  }, []); // Run only on mount
+
   if (field.visibleIf) {
     const shouldShow = Object.entries(field.visibleIf ?? {}).every(
       ([key, expectedValue]) => formData[key] === expectedValue
@@ -32,10 +174,12 @@ export function FormField({
             type="text"
             value={currentValue}
             maxLength={maxLength}
-            onChange={(e) => onChange(field.key, e.target.value)}
+            onChange={(e) => handleChange(field.key, e.target.value)}
+            onBlur={handleBlur}
             placeholder={field.label}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+            className={`w-full rounded-md border ${error ? 'border-red-500' : 'border-input'} bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30`}
           />
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
         </div>
       );
     }
@@ -47,44 +191,64 @@ export function FormField({
           <textarea
             value={currentValue}
             maxLength={maxLength}
-            onChange={(e) => onChange(field.key, e.target.value)}
+            onChange={(e) => handleChange(field.key, e.target.value)}
+            onBlur={handleBlur}
             rows={3}
             placeholder={field.label}
-            className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+            className={`w-full resize-none rounded-md border ${error ? 'border-red-500' : 'border-input'} bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30`}
           />
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
         </div>
       );
     }
-    case 'dropdown':
+    case 'dropdown': {
+      const currentValue = value ?? field.current_value ?? '';
+      const isValueInOptions = field.options?.includes(currentValue);
+      
       return (
-        <select
-          value={value ?? field.current_value ?? ''}
-          onChange={(e) => onChange(field.key, e.target.value)}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
-        >
-          {field.options?.map((option) => (
-            <option key={option} value={option}>
-              {option.charAt(0).toUpperCase() + option.slice(1)}
-            </option>
-          ))}
-        </select>
+        <div className="space-y-1">
+          <select
+            value={isValueInOptions ? currentValue : ''}
+            onChange={(e) => handleChange(field.key, e.target.value)}
+            onBlur={handleBlur}
+            className={`w-full rounded-md border ${error ? 'border-red-500' : 'border-input'} bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30`}
+          >
+            {!isValueInOptions && (
+              <option value="" disabled>
+                Select {field.label}
+              </option>
+            )}
+            {field.options?.map((option) => (
+              <option key={option} value={option}>
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </option>
+            ))}
+          </select>
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+        </div>
       );
+    }
     case 'color':
       return (
-        <div className="flex items-center gap-3">
-          <input
-            type="color"
-            value={value ?? field.current_value ?? '#0EA5E9'}
-            onChange={(e) => onChange(field.key, e.target.value)}
-            className="h-8 w-12 cursor-pointer rounded border border-input bg-background"
-          />
-          <input
-            type="text"
-            value={value ?? field.current_value ?? '#0EA5E9'}
-            onChange={(e) => onChange(field.key, e.target.value)}
-            placeholder="#0EA5E9"
-            className="flex-1 rounded-md border border-input bg-background px-3 py-2 font-mono text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
-          />
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={value ?? field.current_value ?? '#0EA5E9'}
+              onChange={(e) => handleChange(field.key, e.target.value)}
+              onBlur={handleBlur}
+              className="h-8 w-12 cursor-pointer rounded border border-input bg-background"
+            />
+            <input
+              type="text"
+              value={value ?? field.current_value ?? '#0EA5E9'}
+              onChange={(e) => handleChange(field.key, e.target.value)}
+              onBlur={handleBlur}
+              placeholder="#0EA5E9"
+              className={`flex-1 rounded-md border ${error ? 'border-red-500' : 'border-input'} bg-background px-3 py-2 font-mono text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30`}
+            />
+          </div>
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
         </div>
       );
     case 'toggle': {
@@ -105,12 +269,16 @@ export function FormField({
     }
     case 'number':
       return (
-        <input
-          type="number"
-          value={value ?? field.current_value ?? 0}
-          onChange={(e) => onChange(field.key, parseInt(e.target.value) || 0)}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
-        />
+        <div className="space-y-1">
+          <input
+            type="number"
+            value={value ?? field.current_value ?? 0}
+            onChange={(e) => handleChange(field.key, parseInt(e.target.value) || 0)}
+            onBlur={handleBlur}
+            className={`w-full rounded-md border ${error ? 'border-red-500' : 'border-input'} bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30`}
+          />
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+        </div>
       );
     case 'slider':
       return (
@@ -153,7 +321,7 @@ export function FormField({
       { console.log('Rendering text field', field, value); }
       return (
         <div className="space-y-4">
-          <div className="flex flex-wrap gap-2 rounded-lg bg-muted/50 p-4">
+          <div className={`flex flex-wrap gap-2 rounded-lg bg-muted/50 p-4 ${error ? 'border border-red-500' : ''}`}>
             {(value || field.current_value || []).map((item: string, index: number) => (
               <div
                 key={index}
@@ -165,7 +333,7 @@ export function FormField({
                   onClick={() => {
                     const newList = [...(value || field.current_value || [])];
                     newList.splice(index, 1);
-                    onChange(field.key, newList);
+                    handleChange(field.key, newList);
                   }}
                   className="text-red-500 hover:text-red-600"
                 >
@@ -174,6 +342,7 @@ export function FormField({
               </div>
             ))}
           </div>
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
           <div className="flex gap-2">
             <input
               type="text"
@@ -183,7 +352,7 @@ export function FormField({
                 if (e.key === 'Enter' && e.currentTarget.value.trim()) {
                   const newList = [...(value || field.current_value || [])];
                   newList.push(e.currentTarget.value.trim());
-                  onChange(field.key, newList);
+                  handleChange(field.key, newList);
                   e.currentTarget.value = '';
                 }
               }}
@@ -195,7 +364,7 @@ export function FormField({
                 if (input && input.value.trim()) {
                   const newList = [...(value || field.current_value || [])];
                   newList.push(input.value.trim());
-                  onChange(field.key, newList);
+                  handleChange(field.key, newList);
                   input.value = '';
                 }
               }}
@@ -269,9 +438,20 @@ export function FormField({
     //     </div>
     //   );
     case 'voice_preview': {
+      const voiceOptions = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+      const currentValue = value ?? field.current_value ?? '';
+      const isValueValid = voiceOptions.includes(currentValue);
+      
       return (
         <div className="space-y-2">
-          <VoicePicker field={{key:field.key, current_value:field.current_value}} value={value ?? field.current_value} onChange={onChange} />
+          <div className={`${error ? 'border border-red-500 rounded-lg p-4' : ''}`}>
+            <VoicePicker 
+              field={{key: field.key, current_value: field.current_value}} 
+              value={isValueValid ? currentValue : voiceOptions[0]} 
+              onChange={handleChange} 
+            />
+          </div>
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
         </div>
       );
     }
@@ -288,16 +468,18 @@ export function FormField({
               if (file) {
                 const reader = new FileReader();
                 reader.onload = (ev) => {
-                  onChange(field.key, ev.target?.result);
+                  handleChange(field.key, ev.target?.result);
                 };
                 reader.readAsDataURL(file);
               }
             }}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+            onBlur={handleBlur}
+            className={`w-full rounded-md border ${error ? 'border-red-500' : 'border-input'} bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30`}
           />
           {currentValue && (
             <img src={currentValue} alt="Bot Icon Preview" className="mt-2 h-12 w-12 rounded-full object-cover border" />
           )}
+          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
         </div>
       );
     }
